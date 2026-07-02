@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>调试版本</title>
+    <style>
+        body { font-family: 'Microsoft YaHei', sans-serif; }
+        #chessboard {
+            width: 600px;
+            height: 660px;
+            background: #d2b48c;
+            border: 10px solid #8b4513;
+            position: relative;
+            overflow: visible;
+        }
+        .piece {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: bold;
+            z-index: 100;
+            border: 2px solid yellow;
+        }
+        .piece.red { background: #ff4d4d !important; color: white !important; }
+        .piece.black { background: #333 !important; color: white !important; }
+        #debug-info {
+            margin-top: 20px;
+            padding: 10px;
+            background: #f0f0f0;
+            border: 1px solid #ccc;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>调试版本 - 棋子显示测试</h1>
+    <div id="chessboard"></div>
+    <div id="debug-info"></div>
+    
+    <script>
+        const board = document.getElementById('chessboard');
+        const debug = document.getElementById('debug-info');
+        
+        let log = '';
+        function addLog(msg) {
+            log += msg + '<br>';
+            debug.innerHTML = log;
+            console.log(msg);
+        }
+        
+        addLog('=== 开始调试 ===');
+        addLog('棋盘元素:', board);
+        addLog('棋盘尺寸:', board.offsetWidth + 'x' + board.offsetHeight);
+        
+        // 模拟棋盘数据
+        const chessBoardData = Array(10).fill().map(() => Array(9).fill(null));
+        
+        const redBackRow = ['车', '马', '相', '仕', '帅', '仕', '相', '马', '车'];
+        for (let col = 0; col < 9; col++) {
+            chessBoardData[9][col] = { type: redBackRow[col], color: 'red' };
+        }
+        chessBoardData[7][1] = { type: '炮', color: 'red' };
+        chessBoardData[7][7] = { type: '炮', color: 'red' };
+        for (let col = 0; col < 9; col += 2) {
+            chessBoardData[6][col] = { type: '兵', color: 'red' };
+        }
+        
+        const blackBackRow = ['車', '馬', '象', '士', '将', '士', '象', '馬', '車'];
+        for (let col = 0; col < 9; col++) {
+            chessBoardData[0][col] = { type: blackBackRow[col], color: 'black' };
+        }
+        chessBoardData[2][1] = { type: '炮', color: 'black' };
+        chessBoardData[2][7] = { type: '炮', color: 'black' };
+        for (let col = 0; col < 9; col += 2) {
+            chessBoardData[3][col] = { type: '卒', color: 'black' };
+        }
+        
+        addLog('棋盘数据初始化完成');
+        
+        let pieceCount = 0;
+        for (let row = 0; row < 10; row++) {
+            for (let col = 0; col < 9; col++) {
+                if (chessBoardData[row][col]) pieceCount++;
+            }
+        }
+        addLog('棋盘数据中的棋子数量: ' + pieceCount);
+        
+        addLog('=== 开始创建棋子元素 ===');
+        
+        let createdCount = 0;
+        for (let row = 0; row < 10; row++) {
+            for (let col = 0; col < 9; col++) {
+                const piece = chessBoardData[row][col];
+                if (piece) {
+                    const pieceElement = document.createElement('div');
+                    pieceElement.className = `piece ${piece.color}`;
+                    pieceElement.textContent = piece.type;
+                    pieceElement.dataset.row = row;
+                    pieceElement.dataset.col = col;
+                    
+                    const left = 30 + col * 60;
+                    const top = 30 + row * 60;
+                    pieceElement.style.left = `${left}px`;
+                    pieceElement.style.top = `${top}px`;
+                    pieceElement.style.transform = 'translate(-50%, -50%)';
+                    
+                    board.appendChild(pieceElement);
+                    createdCount++;
+                    
+                    if (createdCount <= 5) {
+                        addLog(`创建棋子: ${piece.type}(${piece.color}) at ${row},${col} - left:${left}px, top:${top}px`);
+                    }
+                }
+            }
+        }
+        
+        addLog('创建完成，共创建 ' + createdCount + ' 个棋子元素');
+        
+        const piecesOnPage = board.querySelectorAll('.piece');
+        addLog('页面上实际的棋子数量: ' + piecesOnPage.length);
+        
+        if (piecesOnPage.length > 0) {
+            const firstPiece = piecesOnPage[0];
+            addLog('第一个棋子信息:');
+            addLog('  className: ' + firstPiece.className);
+            addLog('  textContent: ' + firstPiece.textContent);
+            addLog('  style.left: ' + firstPiece.style.left);
+            addLog('  style.top: ' + firstPiece.style.top);
+            addLog('  style.transform: ' + firstPiece.style.transform);
+            addLog('  offsetWidth: ' + firstPiece.offsetWidth);
+            addLog('  offsetHeight: ' + firstPiece.offsetHeight);
+            addLog('  offsetLeft: ' + firstPiece.offsetLeft);
+            addLog('  offsetTop: ' + firstPiece.offsetTop);
+            addLog('  zIndex: ' + firstPiece.style.zIndex);
+            
+            const computedStyle = window.getComputedStyle(firstPiece);
+            addLog('  computed background: ' + computedStyle.backgroundColor);
+            addLog('  computed color: ' + computedStyle.color);
+            addLog('  computed display: ' + computedStyle.display);
+            addLog('  computed visibility: ' + computedStyle.visibility);
+        }
+        
+        addLog('=== 调试结束 ===');
+    </script>
+</body>
+</html>

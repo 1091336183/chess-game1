@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>完整测试棋盘</title>
+    <style>
+        #chessboard {
+            width: 600px;
+            height: 660px;
+            background: #d2b48c;
+            border: 10px solid #8b4513;
+            position: relative;
+        }
+        
+        #chessboard::before {
+            content: '';
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            right: 30px;
+            bottom: 30px;
+            background-image: 
+                linear-gradient(to right, #000 1px, transparent 1px),
+                linear-gradient(to bottom, #000 1px, transparent 1px);
+            background-size: 60px 60px;
+            z-index: 0;
+        }
+        
+        .piece {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8em;
+            font-weight: bold;
+            z-index: 2;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        .piece.red {
+            background: #ff4d4d;
+            color: white;
+        }
+        
+        .piece.black {
+            background: #333;
+            color: white;
+        }
+        
+        .status {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <div id="chessboard">
+        <div class="status">测试棋盘 - 32颗棋子</div>
+    </div>
+    
+    <script>
+        const board = document.getElementById('chessboard');
+        let count = 0;
+        
+        function createPiece(type, color, row, col) {
+            const piece = document.createElement('div');
+            piece.className = `piece ${color}`;
+            piece.textContent = type;
+            const left = 30 + col * 60;
+            const top = 30 + row * 60;
+            piece.style.left = `${left}px`;
+            piece.style.top = `${top}px`;
+            piece.style.transform = 'translate(-50%, -50%)';
+            board.appendChild(piece);
+            count++;
+            console.log(`添加棋子: ${type}(${color}) at ${row},${col}`);
+        }
+        
+        // 红方（下方）
+        const redBackRow = ['车', '马', '相', '仕', '帅', '仕', '相', '马', '车'];
+        for (let col = 0; col < 9; col++) {
+            createPiece(redBackRow[col], 'red', 9, col);
+        }
+        createPiece('炮', 'red', 7, 1);
+        createPiece('炮', 'red', 7, 7);
+        for (let col = 0; col < 9; col += 2) {
+            createPiece('兵', 'red', 6, col);
+        }
+        
+        // 黑方（上方）
+        const blackBackRow = ['車', '馬', '象', '士', '将', '士', '象', '馬', '車'];
+        for (let col = 0; col < 9; col++) {
+            createPiece(blackBackRow[col], 'black', 0, col);
+        }
+        createPiece('炮', 'black', 2, 1);
+        createPiece('炮', 'black', 2, 7);
+        for (let col = 0; col < 9; col += 2) {
+            createPiece('卒', 'black', 3, col);
+        }
+        
+        console.log(`完成！共添加 ${count} 颗棋子`);
+    </script>
+</body>
+</html>
